@@ -1,5 +1,9 @@
+import base64
 import calendar
 import datetime
+import hashlib
+import hmac
+
 import jwt
 from flask import request
 from flask_restx import Resource, Namespace, abort
@@ -27,6 +31,18 @@ class AuthViews(Resource):
             "username": user.username,
             "role": user.role
         }
+
+        pass_hash = User.get_hash(User.password)
+        decode_hash = base64.b64decode(pass_hash)
+
+        hash_pass = hashlib.pbkdf2_hmac(
+            'sha256',
+            password.encode('utf-8'),
+            PWD_HASH_SALT,
+            PWD_HASH_ITERATIONS
+        )
+        if not hmac.compare_digest(decode_hash, hash_pass):
+            abort(400)
 
         min30 = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
         data["exp"] = calendar.timegm(min30.timetuple())
