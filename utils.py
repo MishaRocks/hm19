@@ -1,6 +1,17 @@
-from constants import algo, secret
+import hashlib
+
+from constants import algo, secret, PWD_HASH_SALT, PWD_HASH_ITERATIONS
 import jwt
 from flask import request, abort
+
+
+def get_hash(password):
+    return hashlib.pbkdf2_hmac(
+        'sha256',
+        password.encode('utf-8'),
+        PWD_HASH_SALT,
+        PWD_HASH_ITERATIONS
+    ).decode("utf-8", "ignore")
 
 
 def auth_required(func):

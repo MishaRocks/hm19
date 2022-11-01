@@ -57,13 +57,6 @@ class User(db.Model):
     password = db.Column(db.String)
     role = db.Column(db.String)
 
-    def get_hash(self):
-        return hashlib.pbkdf2_hmac(
-            'sha256',
-            self.password.encode('utf-8'),
-            PWD_HASH_SALT,
-            PWD_HASH_ITERATIONS
-        ).decode("utf-8", "ignore")
 
 class UserSchema(Schema):
     id = fields.Int()

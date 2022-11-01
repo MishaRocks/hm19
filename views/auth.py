@@ -10,8 +10,10 @@ from flask_restx import Resource, Namespace, abort
 from models import User
 from setup_db import db
 from constants import algo, secret, PWD_HASH_SALT, PWD_HASH_ITERATIONS
+from utils import get_hash
 
 auth_ns = Namespace('/auth')
+
 
 @auth_ns.route('/')
 class AuthViews(Resource):
@@ -32,7 +34,7 @@ class AuthViews(Resource):
             "role": user.role
         }
 
-        pass_hash = User.get_hash(User.password)
+        pass_hash = get_hash(User.password)
         decode_hash = base64.b64decode(pass_hash)
 
         hash_pass = hashlib.pbkdf2_hmac(
